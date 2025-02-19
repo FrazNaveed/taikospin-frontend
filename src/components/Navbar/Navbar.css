@@ -1,0 +1,138 @@
+/* Navbar Styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  color: black;
+  background: white;
+  border-radius: 30px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 1400px; /* Increased width on larger screens */
+  margin: 0 auto; /* Centering */
+  gap: 20px;
+}
+
+/* Social Icons */
+.social-icons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.social-icons img {
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+  width: 24px;
+  height: 24px;
+}
+
+.social-icons img:hover {
+  transform: scale(1.1);
+}
+
+/* Wallet Section */
+.wallet-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Wallet Balance */
+.wallet-balance {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.wallet-balance p {
+  font-weight: bold;
+}
+
+.wallet-balance img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Wallet Dropdown */
+.wallet-container {
+  position: relative;
+  display: inline-block;
+}
+
+.wallet-hover {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 1;
+}
+
+.wallet-container:hover .wallet-hover {
+  display: flex;
+}
+
+
+.taiko-text{
+  font-size: x-small;
+  font-weight: 700;
+}
+
+
+/* Buttons */
+.disconnect-btn,
+.switch-network-btn {
+  padding: 0.5rem 1rem;
+  background-color: #ff6b6b;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.disconnect-btn:hover,
+.switch-network-btn:hover {
+  background-color: #ff4c4c;
+}
+
+/* Hamburger Menu */
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+/* Responsive Navbar */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .social-icons {
+    order: 2; /* Move below logo */
+    margin-top: 10px;
+  }
+
+  .wallet-section {
+    order: 3; /* Move connect button below social icons */
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hamburger {
+    display: block;
+    position: absolute;
+    top: 15px;
+    right: 20px;
+  }
+}
