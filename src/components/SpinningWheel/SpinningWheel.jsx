@@ -64,7 +64,7 @@ const SpinningWheel = ({ refetchBalance }) => {
     }
 
     const domain = {
-      name: "TaikoToken",
+      name: "Taiko Token",
       version: "1",
       chainId: 167000,
       verifyingContract: addresses.TAIKO_TOKEN_ADDRESS,
