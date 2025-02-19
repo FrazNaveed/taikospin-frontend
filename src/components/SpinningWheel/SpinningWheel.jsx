@@ -95,16 +95,16 @@ const SpinningWheel = ({ refetchBalance }) => {
         primaryType: "Permit", // Explicitly specify the primary type
         message,
       });
-      // const res = await fetch(`${SERVER_URL}/contract/spin`, {
-      //   method: "POST",
-      //   body: JSON.stringify({
-      //     signature: signature,
-      //     message: message,
-      //   }),
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      // });
+      const res = await fetch(`${SERVER_URL}/contract/spin`, {
+        method: "POST",
+        body: JSON.stringify({
+          signature: signature,
+          message: message,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       // Proceed with spinning the wheel after successful signature
       const x = 1024; // min value
