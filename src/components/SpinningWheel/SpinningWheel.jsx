@@ -38,6 +38,38 @@ const SpinningWheel = ({ refetchBalance }) => {
     },
   });
 
+  const { data: hasClaimed, refetch: refetchHasClaimed } = useQuery({
+    queryKey: ["hasClaimed", address],
+    queryFn: async () => {
+      const response = await fetch(
+        `${SERVER_URL}/contract/hasClaimed?userAddress=${address}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch value.");
+      const data = await response.json();
+      return data.hasClaimed;
+    },
+    enabled: isConnected && Boolean(address),
+    onError: () => {
+      toast.error("Failed to fetch value.");
+    },
+  });
+
+  const { data: spinCount, refetch: refetchSpinCount } = useQuery({
+    queryKey: ["spinCount", address],
+    queryFn: async () => {
+      const response = await fetch(
+        `${SERVER_URL}/contract/spinCount?userAddress=${address}`
+      );
+      if (!response.ok) throw new Error("Failed to fetch value.");
+      const data = await response.json();
+      return data.spinCount;
+    },
+    enabled: isConnected && Boolean(address),
+    onError: () => {
+      toast.error("Failed to fetch value.");
+    },
+  });
+
   const {
     data: signMessageData,
     isLoading: isLoadingMessage,
@@ -83,7 +115,7 @@ const SpinningWheel = ({ refetchBalance }) => {
     const message = {
       owner: address,
       spender: addresses.TAIKO_SPIN_WHEEL,
-      value: ethers.parseUnits("1", "ether").toString(),
+      value: ethers.parseUnits("0.1", "ether").toString(),
       nonce: nonce.hex.toString(), // Use the hex value of the nonce
       deadline: Math.floor(Date.now() / 1000) + 300, // 5 minutes from now
     };
@@ -105,16 +137,18 @@ const SpinningWheel = ({ refetchBalance }) => {
           "Content-Type": "application/json",
         },
       });
+      const result = await res.json();
+      if (result.success) {
+        // Proceed with spinning the wheel after successful signature
+        const x = 1024; // min value
+        const y = 9999; // max value
+        const deg = Math.floor(Math.random() * (y - x)) + x;
+        setRotation(deg);
 
-      // Proceed with spinning the wheel after successful signature
-      const x = 1024; // min value
-      const y = 9999; // max value
-      const deg = Math.floor(Math.random() * (y - x)) + x;
-      setRotation(deg);
-
-      setTimeout(() => {
-        setIsModalOpen(true);
-      }, 5000);
+        setTimeout(() => {
+          setIsModalOpen(true);
+        }, 5000);
+      }
     } catch (error) {
       console.error("Signature error:", error);
       alert("Signature request rejected!");
@@ -133,7 +167,7 @@ const SpinningWheel = ({ refetchBalance }) => {
 
       // Request the user to sign the message
       const signature = await signer.signMessage(signMessageData.message);
-
+      toast.success("Signature submitted. Wait for confirmation"); // Show success toast
       // Send the signature to the backend for verification
       const res = await fetch(`${SERVER_URL}/auth/verifySignature`, {
         method: "POST",
@@ -150,7 +184,7 @@ const SpinningWheel = ({ refetchBalance }) => {
       const result = await res.json();
       if (result.success) {
         toast.success(result.message); // Show success toast
-        setIsWheelVisible(true);
+        refetchHasClaimed();
         refetchBalance.current();
       } else {
         toast.error(result.message);
@@ -162,22 +196,26 @@ const SpinningWheel = ({ refetchBalance }) => {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    setIsWheelVisible(false);
+    refetchHasClaimed();
+    refetchSpinCount();
     refetchBalance.current();
   };
 
   return (
     <div id="main" className="main">
-      {!isWheelVisible ? (
+      {spinCount >= 5 ? (
+        <h2 className="spinCount">You have reached claim count.</h2>
+      ) : !hasClaimed ? (
         <button
           className="request-button"
           onClick={() => {
             handleSignMessage();
+            setIsWheelVisible(true); // Show wheel after claiming
           }}
         >
           Claim Taiko 🥁
         </button>
-      ) : (
+      ) : hasClaimed ? (
         <>
           <div
             id="wheel"
@@ -218,7 +256,7 @@ const SpinningWheel = ({ refetchBalance }) => {
             SPIN
           </button>
         </>
-      )}
+      ) : null}
 
       {/* Modal */}
       {isModalOpen && (
